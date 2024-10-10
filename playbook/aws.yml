@@ -14,20 +14,13 @@
         vpc_subnet_id: "subnet-0c138a7940b30644c"  
         security_group: essential                 
         tags:                             
-          Name: "Ansible-EC2"
+          Name: "Ansible-EC222"
       register: ec2
 
     - name: Display instance information
       debug:
         var: ec2
 
-    - name: Wait for SSH to be available
-      wait_for:
-        host: "{{ ec2.instances[0].public_ip_address }}"
-        port: 22
-        delay: 10
-        timeout: 300
-        state: started
 
     - name: Display public IP of launched instance
       debug:
