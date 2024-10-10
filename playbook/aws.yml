@@ -13,7 +13,7 @@
         count: 1
         vpc_subnet_id: "subnet-05864f24efdd82bc6"  
         security_group:               
-          - "localinstance-sg1"                 
+          - "essential"                 
         tags:                             
           Name: "Ansible-EC2"
       register: ec2
