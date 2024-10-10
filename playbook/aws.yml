@@ -4,29 +4,40 @@
   connection: local
   gather_facts: False
 
-  vars:
-    key_name: my_aws             # Key used for SSH
-    region: us-east-1       # Region may affect response and pricing
-    image: ami-0fff1b9a61 # look in ec2 > ami (filter owner alias: amazon) or amis of manually launched instances
-    id: "example testing"
-    instance_type: t2.nano       # Choose instance type, check AWS for pricing
-    # vpc_id: subnet-012345
-    sec_group: "test-security-group"
-
+- name: Launch EC2 instance
+  hosts: localhost
+  gather_facts: 'no'
   tasks:
-    - name: Provisioning EC2 instances
-      block:
-
-      - name: Create security group
-        amazon.aws.ec2_security_group:
-          name: "{{ sec_group }}"
-          description: "Sec group for app"
-          region: "{{ region }}"
-          aws_access_key: "{{ec2_access_key}}"  # From vault as defined
-          aws_secret_key: "{{ec2_secret_key}}"  # From vault as defined
-          rules:                                # allows ssh on port 22
-            - proto: tcp
-              ports:
-                - 22
-              cidr_ip: 0.0.0.0/0
-              rule_desc: allow all on ssh port
+    - name: Launch EC2 instance
+      amazon.aws.ec2_instance:
+        key_name: localinstance
+        instance_type: t2.micro
+        region: us-east-1
+        image_id: ami-0fff1b9a61
+        wait: 'yes'
+        count: 1
+        vpc_subnet_id: vpc-036ea5aa7082288b3
+        security_group: subnet-05864f24efdd82bc6
+        instance_tags:
+          Name: Ansible-EC2
+      register: ec2
+    - name: Display instance information
+      debug:
+        msg: '{{ ec2.instances }}'
+    - name: Add instance to inventory
+      add_host:
+        name: '{{ item.public_ip_address }}'
+        groups: launched
+      loop: '{{ ec2.instances }}'
+    - name: Wait for SSH to be available
+      wait_for:
+        host: '{{ item.public_ip_address }}'
+        port: 22
+        delay: 10
+        timeout: 300
+        state: started
+      loop: '{{ ec2.instances }}'
+    - name: Display public IP of launched instance
+      debug:
+        msg: 'Instance public IP: {{ item.public_ip_address }}'
+      loop: '{{ ec2.instances }}'
