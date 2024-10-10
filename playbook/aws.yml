@@ -8,7 +8,7 @@
         key_name: "localinstance"
         instance_type: "t2.micro"
         region: "us-east-1"
-        image_id: "ami-0fff1b9a61"  # Replace with your desired AMI
+        image_id: "ami-0a676bff45ee7534e"  # Replace with your desired AMI
         wait: true
         count: 1
         vpc_subnet_id: "subnet-0c138a7940b30644c"  
