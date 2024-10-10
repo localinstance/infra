@@ -5,34 +5,31 @@
   tasks:
     - name: Launch EC2 instance
       amazon.aws.ec2_instance:
-        key_name: localinstance
-        instance_type: t2.micro
-        region: us-east-1
-        image_id: ami-0fff1b9a61
-        wait: 'yes'
+        key_name: "localinstance"
+        instance_type: "t2.micro"
+        region: "us-east-1"
+        image_id: "ami-0fff1b9a61"  # Replace with your desired AMI
+        wait: true
         count: 1
-        vpc_subnet_id: vpc-036ea5aa7082288b3
-        security_group: subnet-05864f24efdd82bc6
-        instance_tags:
-          Name: Ansible-EC2
+        vpc_subnet_id: "vpc-036ea5aa7082288b"  # Optional, use if not in default VPC
+        security_group_ids:               # Updated to use the correct parameter
+          - "subnet-05864f24efdd82bc6"                 # Replace with your security group ID
+        tags:                             # Updated tag structure
+          Name: "Ansible-EC2"
       register: ec2
+
     - name: Display instance information
       debug:
-        msg: '{{ ec2.instances }}'
-    - name: Add instance to inventory
-      add_host:
-        name: '{{ item.public_ip_address }}'
-        groups: launched
-      loop: '{{ ec2.instances }}'
+        var: ec2
+
     - name: Wait for SSH to be available
       wait_for:
-        host: '{{ item.public_ip_address }}'
+        host: "{{ ec2.instances[0].public_ip_address }}"
         port: 22
         delay: 10
         timeout: 300
         state: started
-      loop: '{{ ec2.instances }}'
+
     - name: Display public IP of launched instance
       debug:
-        msg: 'Instance public IP: {{ item.public_ip_address }}'
-      loop: '{{ ec2.instances }}'
+        msg: "Instance public IP: {{ ec2.instances[0].public_ip_address }}"
