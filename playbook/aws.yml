@@ -13,7 +13,7 @@
         count: 1
         vpc_subnet_id: "subnet-05864f24efdd82bc6"  # Optional, use if not in default VPC
         security_group:               # Updated to use the correct parameter
-          - "localinstance-subnet-private1-us-east-1a"                 # Replace with your security group ID
+          - "sg-095f257066b07469e"                 # Replace with your security group ID
         tags:                             # Updated tag structure
           Name: "Ansible-EC2"
       register: ec2
