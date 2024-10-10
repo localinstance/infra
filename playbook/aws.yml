@@ -11,10 +11,10 @@
         image_id: "ami-0fff1b9a61"  # Replace with your desired AMI
         wait: true
         count: 1
-        vpc_subnet_id: "subnet-05864f24efdd82bc6"  # Optional, use if not in default VPC
-        security_group:               # Updated to use the correct parameter
-          - "sg-095f257066b07469e"                 # Replace with your security group ID
-        tags:                             # Updated tag structure
+        vpc_subnet_id: "subnet-05864f24efdd82bc6"  
+        security_group:               
+          - "localinstance-sg1"                 
+        tags:                             
           Name: "Ansible-EC2"
       register: ec2
 
