@@ -20,8 +20,3 @@
     - name: Display instance information
       debug:
         var: ec2
-
-
-    - name: Display public IP of launched instance
-      debug:
-        msg: "Instance public IP: {{ ec2.instances[0].public_ip_address }}"
