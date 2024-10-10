@@ -11,7 +11,7 @@
         image_id: "ami-0fff1b9a61"  # Replace with your desired AMI
         wait: true
         count: 1
-        vpc_subnet_id: "vpc-036ea5aa7082288b"  # Optional, use if not in default VPC
+        vpc_subnet_id: "subnet-05864f24efdd82bc6"  # Optional, use if not in default VPC
         security_group:               # Updated to use the correct parameter
           - "localinstance-subnet-private1-us-east-1a"                 # Replace with your security group ID
         tags:                             # Updated tag structure
