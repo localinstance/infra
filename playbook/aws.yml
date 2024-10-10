@@ -11,7 +11,7 @@
         image_id: "ami-0fff1b9a61"  # Replace with your desired AMI
         wait: true
         count: 1
-        vpc_subnet_id: "subnet-05864f24efdd82bc6"  
+        vpc_subnet_id: "vpc-036ea5aa7082288b3"  
         security_group: essential                 
         tags:                             
           Name: "Ansible-EC2"
