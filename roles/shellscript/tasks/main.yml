@@ -1,4 +1,7 @@
 ---
 - name: Return motd to registered var
   ansible.builtin.command: df -Tha
-  register: mymotd
+  register: dfh
+- name: debug the command output
+  debug:
+  var: dfh
