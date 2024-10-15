@@ -1,4 +1,4 @@
 ---
 - name: Return motd to registered var
-  ansible.builtin.command: cat /etc/motd
+  ansible.builtin.command: df -Tha
   register: mymotd
