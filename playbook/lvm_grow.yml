@@ -1,11 +1,10 @@
 ---
 - name: Run only sudo commands for LVM and filesystem extension
   hosts: all
-  
   tasks:
     - name: display vg deatils
-      ansible.builtin.command: vgdisplay 
-        register: vgdis
+      ansible.builtin.command: vgdisplay
+      register: vgdis
     - name: printing vgdisplay output
       debug:
         var: vgdis
