@@ -2,3 +2,11 @@
 - name: Run only sudo commands for LVM and filesystem extension
   hosts: all
   
+  tasks:
+    - name: Extend the logical volume by given space
+      community.general.lvol:
+        vg: firefly
+        lv: test
+        size: +512M
+
+  
