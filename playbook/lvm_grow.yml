@@ -1,2 +1,4 @@
 ---
-hosts 
+- name: Run only sudo commands for LVM and filesystem extension
+  hosts: all
+  
