@@ -1,6 +1,7 @@
 ---
-- name: Run only sudo commands for LVM and filesystem extension
+- name: Run only sudo commands for vgs display
   hosts: all
+  become: true
   tasks:
     - name: display vg deatils
       ansible.builtin.command: vgdisplay
