@@ -1,7 +1,7 @@
 ---
 - name: Run only sudo commands for vgs display
   hosts: all
-  become: true
+ ## become: true
   tasks:
     - name: display vg deatils
       ansible.builtin.command: vgdisplay
