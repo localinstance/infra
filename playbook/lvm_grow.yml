@@ -3,10 +3,9 @@
   hosts: all
   
   tasks:
-    - name: Extend the logical volume by given space
-      community.general.lvol:
-        vg: firefly
-        lv: test
-        size: +512M
-
-  
+    - name: display vg deatils
+      ansible.builtin.command: vgdisplay 
+        register: vgdis
+    - name: printing vgdisplay output
+      debug:
+        var: vgdis
