@@ -5,7 +5,7 @@
   become_user: admin
   tasks:
     - name: display vg deatils
-      ansible.builtin.command: vgdisplay
+      ansible.builtin.command: sudo vgdisplay
       register: vgdis
     - name: printing vgdisplay output
       debug:
