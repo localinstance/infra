@@ -1,14 +1,14 @@
 ---
 - name: Run only sudo commands for vgs display
   hosts: all
-  become: true
-  become_method: sudo
-  become_exe: /usr/bin/sudo
-  become_flag: "-u admin"
   tasks:
     - name: display vg deatils
       ansible.builtin.command: sudo vgdisplay
       register: vgdis
+      become: true
+      become_exe: /usr/local/sudo
+      become_flags: "-u admin" 
+      
     - name: printing vgdisplay output
       debug:
         var: vgdis
