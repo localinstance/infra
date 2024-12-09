@@ -6,7 +6,7 @@
       ansible.builtin.command: sudo vgdisplay
       register: vgdis
       become: true
-      become_exe: /usr/local/sudo
+      become_exe: /usr/bin/sudo
       become_flags: "-u admin" 
       
     - name: printing vgdisplay output
