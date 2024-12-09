@@ -4,8 +4,8 @@
   tasks:
     - name: Rename a VG by name
       community.general.lvg_rename:
-      vg: tstvg
-      vg_new: mytstvg
+       vg: tstvg
+       vg_new: mytstvg
       register: vgdis
       become: true
       become_exe: /usr/bin/sudo
