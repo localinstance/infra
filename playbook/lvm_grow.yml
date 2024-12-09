@@ -1,11 +1,11 @@
 ---
-- name: Run only sudo commands for vgs display
+- name: Run only sudo commands for dnf action
   hosts: all
   tasks:
-    - name: Rename a VG by name
-      community.general.lvg_rename:
-        vg: tstvg
-        vg_new: mytstvg
+    - name: install http with dnf
+      ansible.builtin.dnf:
+        name: httpd
+        state: latest
       register: vgdis
       become: true
       become_exe: /usr/bin/sudo
