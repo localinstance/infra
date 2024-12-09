@@ -1,12 +1,13 @@
 ---
 - name: Run only sudo commands for dnf action
   hosts: all
+  become: true
+  become_method: sudo
+  become_exe: /usr/bin/sudo
+  become_flags: "-u admin"
+  
   tasks:
     - name: install http with dnf
       ansible.builtin.dnf:
         name: httpd
         state: latest
-      register: vgdis
-      become: true
-      become_exe: /usr/bin/sudo
-      become_flags: "-u admin"
