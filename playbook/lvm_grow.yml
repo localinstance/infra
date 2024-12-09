@@ -9,8 +9,4 @@
       register: vgdis
       become: true
       become_exe: /usr/bin/sudo
-      become_flags: "-u admin" 
-      
-    - name: printing vgdisplay output
-      debug:
-        var: vgdis
+      become_flags: "-u admin"
