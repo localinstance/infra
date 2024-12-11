@@ -6,7 +6,7 @@
   become_user: opsadmin
   become_method: sudo
   #become_exe: /usr/bin/sudo
-  become_flags: '-u opsadmin'
+  #become_flags: '-u opsadmin'
   become_flags: '-H' 
   
   tasks:
