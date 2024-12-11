@@ -1,7 +1,7 @@
 ---
 - name: Run only sudo commands for dnf action
   hosts: all
-  gather_facts: no
+  #gather_facts: no
   become: true
   become_method: sudo
   become_exe: /usr/bin/sudo
