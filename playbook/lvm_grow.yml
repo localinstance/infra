@@ -8,7 +8,5 @@
   become_flags: "-u admin"
   
   tasks:
-    - name: install http with dnf
-      ansible.builtin.dnf:
-        name: httpd
-        state: latest
+    - name: list vgs command
+      ansible.builtin.command: sudo vgs
