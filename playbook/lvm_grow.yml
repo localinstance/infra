@@ -2,11 +2,18 @@
 - name: Run only sudo commands for dnf action
   hosts: all
   #gather_facts: no
-  become: true
+  become: yes
+  become_user: opsadmin
   become_method: sudo
-  become_exe: /usr/bin/sudo
+  #become_exe: /usr/bin/sudo
   become_flags: '-u opsadmin'
+  become_flags: '-H' 
   
   tasks:
-    - name: list vgs command
-      ansible.builtin.command: ls -l
+    - name: Run the vgs command
+      ansible.builtin.command:
+        cmd: vgs
+      register: vgs_output
+    - name: Show the output of vgs command
+      ansible.builtin.debug:
+        msg: "{{ vgs_output.stdout }}"
