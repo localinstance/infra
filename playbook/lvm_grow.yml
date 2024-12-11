@@ -2,10 +2,10 @@
 - name: Run only sudo commands for dnf action
   hosts: all
   #gather_facts: no
-  #become: true
-  #become_method: sudo
-  #become_exe: /usr/bin/sudo
-  #become_flags: '-u opsadmin'
+  become: true
+  become_method: sudo
+  become_exe: /usr/bin/sudo
+  become_flags: '-u opsadmin'
   
   tasks:
     - name: list vgs command
