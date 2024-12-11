@@ -9,4 +9,4 @@
   
   tasks:
     - name: list vgs command
-      ansible.builtin.command: sudo vgs
+      ansible.builtin.command: vgs
