@@ -1,0 +1,7 @@
+---
+- name: Run only sudo commands for dnf action
+  hosts: all
+  #gather_facts: no
+  become: yes
+  become_user: opsadmin
+  become_method: sudo
