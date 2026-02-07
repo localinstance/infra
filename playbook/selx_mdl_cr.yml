@@ -5,5 +5,8 @@
   become: yes
   become_user: opsadmin
   become_method: sudo
-  task:
-  
+  tasks:
+    - name: checking current unconfined service from selinux contex
+      ansibe.builtin.shell:|
+        ps -eZ | grep -E "unconfined_t|initrc_t" | grep -v "kernel"
+      register: unconfined_service
