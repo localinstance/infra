@@ -25,7 +25,6 @@
       register: unconfined_units
       changed_when: false
       failed_when: false
-
     - name: Create directories for each unconfined service
       ansible.builtin.file:
         path: "/root/admin/selx_cutm_policy/{{ item }}"
@@ -33,6 +32,14 @@
         mode: '0755'
         owner: root
         group: root
+      loop: "{{ unconfined_units.stdout_lines }}"
+      when: unconfined_units.stdout | trim | length > 0
+    - name: Generate SELinux policy templates for each service
+      ansible.builtin.command:
+        cmd: "sepolicy generate --init -n {{ item | regex_replace('\\.service$', '') }}"
+      args:
+        chdir: "/root/admin/selx_cutm_policy/{{ item }}"
+        creates: "/root/admin/selx_cutm_policy/{{ item }}/{{ item | regex_replace('\\.service$', '') }}.te"
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
     
