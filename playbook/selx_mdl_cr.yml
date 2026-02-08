@@ -6,7 +6,7 @@
   become_method: sudo
   tasks:
     - name: checking conconfined services on server
-      ansible.builtin.shell: ps -eZ | grep "unconfined_service_t" | grep -v grep|awk '{print $NF}'
+      ansible.builtin.shell: ps -efZ | grep "unconfined_service_t" | grep -v grep|awk '{print $NF}'
       register: unconfined_check
       failed_when: false
       changed_when: false
