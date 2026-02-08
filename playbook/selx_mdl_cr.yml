@@ -47,9 +47,16 @@
       loop: "{{ unconfined_units.stdout_lines }}"
     - name: Create list of missing modules
       ansible.builtin.set_fact:
-        missing_services: "{{ module_checks.results | selectattr('rc', 'ne', 0) | map(attribute='item') | list }}"
+        missing_services: >-
+          {{ module_checks.results 
+             | selectattr('rc', 'ne', 0) 
+             | map(attribute='item') 
+             | list }}
+      when: module_checks.results is defined
     - name: Inform which modules are being skipped
       ansible.builtin.debug:
         msg: "Skipping {{ item.item }} because module is already loaded."
       when: item.rc == 0
       loop: "{{ module_checks.results }}"
+      loop_control:
+        label: "{{ item.item }}"
