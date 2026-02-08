@@ -10,8 +10,8 @@
       register: unconfined_check
       failed_when: false
       changed_when: false
-  - name: displaying unconfined service running on server
-    ansible.builtin.debug:
-     "The following unconfined services were found: {{ unconfined_check.stdout }}"
-    when: unconfined_check.stdout != ""
+    - name: displaying unconfined service running on server
+      ansible.builtin.debug:
+       "The following unconfined services were found: {{ unconfined_check.stdout }}"
+      when: unconfined_check.stdout != ""
     
