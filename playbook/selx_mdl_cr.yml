@@ -45,23 +45,16 @@
       failed_when: false
       changed_when: false
       loop: "{{ unconfined_units.stdout_lines }}"
-    - name: Create list of missing modules
-      ansible.builtin.set_fact:
-        missing_services: >-
-          {{ module_checks.results 
-             | selectattr('rc', 'ne', 0) 
-             | map(attribute='item') 
-             | list }}
-      when: module_checks.results is defined
-    - name: Inform which modules are being skipped
+    - name: displaying SELinux module not is already loaded
       ansible.builtin.debug:
-        msg: "SKIPPING: The SELinux module for '{{ item.item }}' is already installed."
-      when:
-        - module_checks.results is defined
-        - - item.rc == 0
-      loop: "{{ module_checks.results | default([]) }}"
+        msg: >
+          Service: {{ item.item }} | 
+          Status: {{ 'Already Loaded' if item.rc == 0 else 'Missing' }} | 
+          Clean Name Search: {{ item.cmd.split('\n')[0] }}
+      loop: "{{ module_exists.results }}"
       loop_control:
         label: "{{ item.item }}"
+      when: module_exists.results is defined
     - name: Create list of missing modules
       ansible.builtin.set_fact:
         missing_services: "{{ module_checks.results | selectattr('rc', 'ne', 0) | map(attribute='item') | list }}"
