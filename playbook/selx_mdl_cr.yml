@@ -3,7 +3,7 @@
   hosts: all
   become: true
   become_user: opsadmin
-   become_method: sudo
+  become_method: sudo
   tasks:
     - name: checking conconfined services on server
       ansible.builtin.shell: ps -efZ | grep "unconfined_service_t" | grep -v grep|awk '{print $NF}'
