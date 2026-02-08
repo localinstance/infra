@@ -45,39 +45,3 @@
       failed_when: false
       changed_when: false
       loop: "{{ unconfined_units.stdout_lines }}"
-    - name: Stop play if module already exists (to prevent overwrite) 
-      ansible.builtin.fail:
-        msg: "The SELinux module for {{ item.item }} is already loaded. Stopping to prevent corruption."
-      when: item.rc == 0
-      loop: "{{ module_exists.results }}"
-    - name: Compile and Install SELinux policies
-      ansible.builtin.shell: |
-        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
-        # Compile
-        make -f /usr/share/selinux/devel/Makefile ${CLEAN_NAME}.pp || exit 1
-        # Install
-        /usr/sbin/semodule -i ${CLEAN_NAME}.pp
-      args:
-        chdir: "/root/admin/selx_cutm_policy/{{ item }}"
-      loop: "{{ unconfined_units.stdout_lines }}"
-    - name: Parse TE file for the specific daemon domain
-      ansible.builtin.shell: |
-        ansible.builtin.shell: |
-        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
-        grep "init_daemon_domain" ${CLEAN_NAME}.te | awk '{print $2}' | tr -d '(),'
-      args:
-        chdir: "/root/admin/selx_cutm_policy/{{ item }}"
-      register: daemon_domain_output
-      loop: "{{ unconfined_units.stdout_lines }}"
-      changed_when: false
-    - name: Apply SELinux contexts and Relabel
-      ansible.builtin.shell: |
-        DOMAIN_TYPE="{{ item.stdout | trim }}"
-        EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item.item }}" | awk '{print $1}' | sed 's/path=//;s/;//')
-        /usr/sbin/semanage fcontext -a -t "$DOMAIN_TYPE" "$EXEC_PATH" || \
-        /usr/sbin/semanage fcontext -m -t "$DOMAIN_TYPE" "$EXEC_PATH"
-        /sbin/restorecon -v "$EXEC_PATH"
-      loop: "{{ daemon_domain_output.results }}"
-      when: item.stdout | length > 0
-      notify: "Restart unconfined services"
-      
