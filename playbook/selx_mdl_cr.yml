@@ -6,7 +6,6 @@
   become_user: opsadmin
   become_method: sudo
   tasks:
-    - name: hecking current unconfined service from selinux contex
-      ansibe.builtin.shell:
-        ps -eZ | grep -E "unconfined_t|initrc_t" | grep -v "kernel"
-      register: unconfined_service
+    -name: display conconfined services
+     ansible.builtin.shell: ps -eZ | grep "unconfined_service_t" | grep -v grep
+    
