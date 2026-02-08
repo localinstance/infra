@@ -5,6 +5,6 @@
   become_user: opsadmin
   become_method: sudo
   tasks:
-    -name: display conconfined services
-     ansible.builtin.shell: ps -eZ | grep "unconfined_service_t" | grep -v grep
+    - name: display conconfined services
+       ansible.builtin.shell: ps -eZ | grep "unconfined_service_t" | grep -v grep
     
