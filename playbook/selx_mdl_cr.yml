@@ -3,8 +3,6 @@
   hosts: all
   remote_user: opsadmin
   become: true
-  # become_user: root
-  # become_method: sudo
   tasks:
     - name: checking conconfined services on server
       ansible.builtin.shell: ps -efZ | grep "unconfined_service_t" | grep -v grep|awk '{print $NF}'
@@ -22,7 +20,6 @@
     #    mode: '0755'
     #    owner: root
     #    group: root
-      tasks:
     - name: Get names of unconfined service units
       ansible.builtin.shell: ps -eZ | grep 'unconfined_service_t' | awk '{print $2}' | xargs -r ps -o unit= -p
       register: unconfined_units
