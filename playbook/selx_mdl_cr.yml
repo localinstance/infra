@@ -62,4 +62,3 @@
       loop: "{{ module_checks.results | default([]) }}"
       loop_control:
         label: "{{ item.item }}"
-        label: "{{ item.item }}"
