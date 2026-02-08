@@ -37,4 +37,16 @@
         creates: "/root/admin/selx_cutm_policy/{{ item }}/{{ item | regex_replace('[^a-zA-Z0-9]', '_') | regex_replace('_service$', '') }}.te"
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
-    
+    - name: Check if SELinux module is already loaded
+      ansible.builtin.shell: |
+        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
+        /usr/sbin/semodule -lfull | grep -w "^${CLEAN_NAME}
+      register: module_exists
+      failed_when: false
+      changed_when: false
+      loop: "{{ unconfined_units.stdout_lines }}"
+    - name: Stop play if module already exists (to prevent overwrite) 
+      ansible.builtin.fail:
+        msg: "The SELinux module for {{ item.item }} is already loaded. Stopping to prevent corruption."
+      when: item.rc == 0
+      loop: "{{ module_exists.results }}"
