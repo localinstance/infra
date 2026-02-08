@@ -2,7 +2,7 @@
 - name: checking selinux unconfined service
   hosts: all
   become: true
-  become_user: root
+  # become_user: root
   # become_method: sudo
   tasks:
     - name: checking conconfined services on server
