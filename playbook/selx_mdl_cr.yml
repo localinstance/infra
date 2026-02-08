@@ -7,6 +7,6 @@
   become_method: sudo
   tasks:
     - name: checking current unconfined service from selinux contex
-      ansibe.builtin.shell:|
+      ansibe.builtin.shell:
         ps -eZ | grep -E "unconfined_t|initrc_t" | grep -v "kernel"
       register: unconfined_service
