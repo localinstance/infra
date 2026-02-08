@@ -55,8 +55,11 @@
       when: module_checks.results is defined
     - name: Inform which modules are being skipped
       ansible.builtin.debug:
-        msg: "Skipping {{ item.item }} because module is already loaded."
-      when: item.rc == 0
-      loop: "{{ module_checks.results }}"
+        msg: "SKIPPING: The SELinux module for '{{ item.item }}' is already installed."
+      when:
+        - module_checks.results is defined
+        - - item.rc == 0
+      loop: "{{ module_checks.results | default([]) }}"
       loop_control:
+        label: "{{ item.item }}"
         label: "{{ item.item }}"
