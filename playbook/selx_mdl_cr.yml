@@ -13,5 +13,5 @@
     - name: displaying unconfined service running on server
       ansible.builtin.debug:
        "The following unconfined services were found: {{ unconfined_check.stdout }}"
-      when: unconfined_check.stdout != ""
+      when: unconfined_check.stdout | length > 0
     
