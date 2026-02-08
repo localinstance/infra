@@ -35,12 +35,11 @@
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
     - name: Generate SELinux policy templates for each service
-      ansible.builtin.command:
-        cmd: "sepolicy generate --init -n {{ item | regex_replace('\\.service$', '') }}"
+      ansible.builtin.shell: |
+        EXEC_PATH=$(systemctl show -p ExecStart --value {{ item }} | awk '{print $1}' | sed 's/path=//')
+        sepolicy generate --init -n {{ item | regex_replace('\\.service$', '') }} $EXEC_PATH
       args:
         chdir: "/root/admin/selx_cutm_policy/{{ item }}"
         creates: "/root/admin/selx_cutm_policy/{{ item }}/{{ item | regex_replace('\\.service$', '') }}.te"
       loop: "{{ unconfined_units.stdout_lines }}"
-      when: unconfined_units.stdout | trim | length > 0
-    
     
