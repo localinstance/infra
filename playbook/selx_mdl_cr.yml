@@ -5,9 +5,13 @@
   become_user: opsadmin
   become_method: sudo
   tasks:
-    - name: display conconfined services
+    - name: checking conconfined services on server
       ansible.builtin.shell: ps -eZ | grep "unconfined_service_t" | grep -v grep
       register: unconfined_check
       failed_when: false
       changed_when: false
+  - name: displaying unconfined service running on server
+    ansible.builtin.debug:
+     "The following unconfined services were found: {{ unconfined_check.stdout }}"
+    when: unconfined_check.stdout != ""
     
