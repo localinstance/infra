@@ -7,4 +7,7 @@
   tasks:
     - name: display conconfined services
        ansible.builtin.shell: ps -eZ | grep "unconfined_service_t" | grep -v grep
+       register: unconfined_check
+       failed_when: false
+        changed_when: false
     
