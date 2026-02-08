@@ -13,13 +13,6 @@
       ansible.builtin.debug:
         msg: "Unconfined: {{ unconfined_check.stdout.split() }}"
       when: unconfined_check.stdout
-    #- name: Creating selinux custom directory to generate the policy for unconfined service
-    #  ansible.builtin.file:
-    #    path: /root/admin/selx_cutm_policy
-    #    state: directory
-    #    mode: '0755'
-    #    owner: root
-    #    group: root
     - name: Get names of unconfined service units
       ansible.builtin.shell: ps -eZ | grep 'unconfined_service_t' | awk '{print $2}' | xargs -r ps -o unit= -p
       register: unconfined_units
