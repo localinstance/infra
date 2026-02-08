@@ -62,3 +62,7 @@
       loop: "{{ module_checks.results | default([]) }}"
       loop_control:
         label: "{{ item.item }}"
+    - name: Create list of missing modules
+      ansible.builtin.set_fact:
+        missing_services: "{{ module_checks.results | selectattr('rc', 'ne', 0) | map(attribute='item') | list }}"
+      when: module_checks.results is defined
