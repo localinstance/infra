@@ -1,6 +1,7 @@
 ---
 - name: checking selinux unconfined service
   hosts: all
+  remote_user: opsadmin
   become: true
   # become_user: root
   # become_method: sudo
