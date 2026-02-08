@@ -13,8 +13,8 @@
       changed_when: false
     - name: displaying unconfined service running on server
       ansible.builtin.debug:
-        var: unconfined_check.stdout_lines
-      when: unconfined_check.stdout | length > 0
+        msg: "No unconfined services detected. System is compliant."
+      when: unconfined_check.stdout | length == 0
     - name: Creating selinux custom directory to generate the policy for unconfined service
       ansible.builtin.file:
         path: /root/admin/selx_cutm_policy
