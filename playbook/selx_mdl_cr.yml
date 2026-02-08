@@ -40,8 +40,16 @@
     - name: Check if SELinux module is already loaded
       ansible.builtin.shell: |
         CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
-        /usr/sbin/semodule -lfull | grep -w "^${CLEAN_NAME}
+        /usr/sbin/semodule -lfull | grep -w "^${CLEAN_NAME}"
       register: module_exists
       failed_when: false
       changed_when: false
       loop: "{{ unconfined_units.stdout_lines }}"
+    - name: Create list of missing modules
+      ansible.builtin.set_fact:
+        missing_services: "{{ module_checks.results | selectattr('rc', 'ne', 0) | map(attribute='item') | list }}"
+    - name: Inform which modules are being skipped
+      ansible.builtin.debug:
+        msg: "Skipping {{ item.item }} because module is already loaded."
+      when: item.rc == 0
+      loop: "{{ module_checks.results }}"
