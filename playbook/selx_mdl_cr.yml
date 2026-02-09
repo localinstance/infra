@@ -43,7 +43,7 @@
         grep "init_daemon_domain" "${CLEAN_NAME}.te" | awk '{print $2}' | tr -d '(),' 
       args: 
         chdir: "/root/admin/selx_cutm_policy/{{ item }}"
-         register: domain_output
-         loop: "{{ unconfined_units.stdout_lines | default([]) }}"
-         when: unconfined_units.stdout | default('') | length > 0
-         changed_when: false
+        register: domain_output
+        loop: "{{ unconfined_units.stdout_lines | default([]) }}"
+        when: unconfined_units.stdout | default('') | length > 0
+        changed_when: false
