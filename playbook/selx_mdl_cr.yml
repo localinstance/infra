@@ -37,7 +37,7 @@
         creates: "/root/admin/selx_cutm_policy/{{ item }}/{{ item | regex_replace('[^a-zA-Z0-9]', '_') | regex_replace('_service$', '') }}.te"
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
-    - name: Extract domain and apply semanage/restorecon
+    - name: displaying only domain type from .te from /root/admin/selx_cutm_policy
       ansible.builtin.shell:
         grep "init_daemon_domain" secure_check.te | awk '{print $2}' | tr -d ')'
       args:
