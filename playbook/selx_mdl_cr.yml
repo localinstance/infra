@@ -37,13 +37,22 @@
         creates: "/root/admin/selx_cutm_policy/{{ item }}/{{ item | regex_replace('[^a-zA-Z0-9]', '_') | regex_replace('_service$', '') }}.te"
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
-    - name: displaying only domain type from .te from /root/admin/selx_cutm_policy
-      ansible.builtin.shell:
-        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
-        grep "init_daemon_domain" "${CLEAN_NAME}.te" | awk '{print $2}' | tr -d '(),' 
-      args: 
-        chdir: "/root/admin/selx_cutm_policy/{{ item }}"
-        register: domain_output
-        loop: "{{ unconfined_units.stdout_lines | default([]) }}"
-        when: unconfined_units.stdout | default('') | length > 0
-        changed_when: false
+    - name: Find all .te files in policy directory
+      find:
+        paths: /root/admin/selx_cutm_policy/
+        patterns: "*.te"
+        recurse: yes
+      register: found_files
+
+    - name: Extract init_daemon_domain types
+      shell: "grep 'init_daemon_domain' {{ item.path }} | awk -F'[ )]' '{print $2}'"
+      loop: "{{ found_files.files }}"
+      register: extracted_types
+      changed_when: false
+      failed_when: false
+
+    - name: Display extracted service types
+      debug:
+        msg: "{{ item.stdout }}"
+      loop: "{{ extracted_types.results }}"
+      when: item.stdout != ""
