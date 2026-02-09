@@ -39,10 +39,11 @@
       when: unconfined_units.stdout | trim | length > 0
     - name: displaying only domain type from .te from /root/admin/selx_cutm_policy
       ansible.builtin.shell:
-        grep "init_daemon_domain" secure_check.te | awk '{print $2}' | tr -d ')'
-      args:
+        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
+        grep "init_daemon_domain" "${CLEAN_NAME}.te" | awk '{print $2}' | tr -d '(),' 
+      args: 
         chdir: "/root/admin/selx_cutm_policy/{{ item }}"
-      register: domain_output
-      loop: "{{ unconfined_units.stdout_lines | default([]) }}"
-      when: unconfined_units.stdout | default('') | length > 0
-      changed_when: false
+         register: domain_output
+         loop: "{{ unconfined_units.stdout_lines | default([]) }}"
+         when: unconfined_units.stdout | default('') | length > 0
+         changed_when: false
