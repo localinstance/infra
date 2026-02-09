@@ -55,6 +55,9 @@
       loop_control:
         label: "{{ item.item }}"
       when: module_exists.results is defined
+    - name: Debug missing_services list
+      ansible.builtin.debug:
+        var: missing_services
     - name: now adding semanage
       ansible.builtin.shell: |
         CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
