@@ -37,7 +37,7 @@
         creates: "/root/admin/selx_cutm_policy/{{ item }}/{{ item | regex_replace('[^a-zA-Z0-9]', '_') | regex_replace('_service$', '') }}.te"
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
-    - name: Check if SELinux module is already loaded
+    - name: displaying SELinux module is not loaded 
       ansible.builtin.shell: |
         CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
         /usr/sbin/semodule -lfull | grep -w "^${CLEAN_NAME}"
@@ -45,7 +45,7 @@
       failed_when: false
       changed_when: false
       loop: "{{ unconfined_units.stdout_lines }}"
-    - name: displaying SELinux module not is already loaded
+    - name: displaying SELinux module not is already loaded - need to be load
       ansible.builtin.debug:
         msg: >
           Service: {{ item.item }} | 
@@ -55,7 +55,16 @@
       loop_control:
         label: "{{ item.item }}"
       when: module_exists.results is defined
-    - name: Create list of missing modules
-      ansible.builtin.set_fact:
-        missing_services: "{{ module_checks.results | selectattr('rc', 'ne', 0) | map(attribute='item') | list }}"
-      when: module_checks.results is defined
+    - name: now adding semanage
+      ansible.builtin.shell: |
+        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
+        DOMAIN_TYPE=$(grep "init_daemon_domain" ${CLEAN_NAME}.te | awk '{print $2}' | tr -d '(),')
+        EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk '{print $1}' | cut -d';' -f1)
+        /usr/sbin/semanage fcontext -a -t "$DOMAIN_TYPE" "$EXEC_PATH" || \
+        /usr/sbin/semanage fcontext -m -t "$DOMAIN_TYPE" "$EXEC_PATH"
+        /sbin/restorecon -v "$EXEC_PATH"
+      args:
+        chdir: "/root/admin/selx_cutm_policy/{{ item }}"
+      loop: "{{ missing_services | default([]) }}"
+      when: missing_services is defined and missing_services | length > 0    
+      
