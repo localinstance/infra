@@ -39,14 +39,10 @@
       when: unconfined_units.stdout | trim | length > 0
     - name: Extract domain and apply semanage/restorecon
       ansible.builtin.shell:
-        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
-        DOMAIN_EXEC_TYPE=$(grep "init_daemon_domain" "${CLEAN_NAME}.te" | awk '{print $2}' | tr -d '(),'
-        EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk '{print $1}' | cut -d';' -f1)
-        /usr/sbin/semanage fcontext -a -t "$DOMAIN_EXEC_TYPE" "$EXEC_PATH" || \
-        /usr/sbin/semanage fcontext -m -t "$DOMAIN_EXEC_TYPE" "$EXEC_PATH"
-        /sbin/restorecon -v "$EXEC_PATH"
+        grep "init_daemon_domain" secure_check.te | awk '{print $2}' | tr -d ')'
       args:
         chdir: "/root/admin/selx_cutm_policy/{{ item }}"
-      loop: "{{ missing_services | default([]) }}"
-      when: missing_services is defined and missing_services | length > 0
-      register: context_result
+      register: domain_output
+      loop: "{{ unconfined_units.stdout_lines | default([]) }}"
+      when: unconfined_units.stdout | default('') | length > 0
+      changed_when: false
