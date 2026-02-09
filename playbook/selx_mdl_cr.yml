@@ -37,37 +37,8 @@
         creates: "/root/admin/selx_cutm_policy/{{ item }}/{{ item | regex_replace('[^a-zA-Z0-9]', '_') | regex_replace('_service$', '') }}.te"
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
-    - name: displaying SELinux module is not loaded 
-      ansible.builtin.shell: |
+    - name: Extract domain and apply semanage/restorecon
+      ansible.builtin.shell:
         CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
-        /usr/sbin/semodule -lfull | grep -w "^${CLEAN_NAME}"
-      register: module_exists
-      failed_when: false
-      changed_when: false
-      loop: "{{ unconfined_units.stdout_lines }}"
-    - name: displaying SELinux module not is already loaded - need to be load
-      ansible.builtin.debug:
-        msg: >
-          Service: {{ item.item }} | 
-          Status: {{ 'Already Loaded' if item.rc == 0 else 'Missing' }} | 
-          Clean Name Search: {{ item.cmd.split('\n')[0] }}
-      loop: "{{ module_exists.results }}"
-      loop_control:
-        label: "{{ item.item }}"
-      when: module_exists.results is defined
-    - name: Debug missing_services list
-      ansible.builtin.debug:
-        var: missing_services
-    - name: now adding semanage
-      ansible.builtin.shell: |
-        CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
-        DOMAIN_TYPE=$(grep "init_daemon_domain" ${CLEAN_NAME}.te | awk '{print $2}' | tr -d '(),')
+        DOMAIN_EXEC_TYPE=$(grep "init_daemon_domain" "${CLEAN_NAME}.te" | awk '{print $2}' | tr -d '(),'
         EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk '{print $1}' | cut -d';' -f1)
-        /usr/sbin/semanage fcontext -a -t "$DOMAIN_TYPE" "$EXEC_PATH" || \
-        /usr/sbin/semanage fcontext -m -t "$DOMAIN_TYPE" "$EXEC_PATH"
-        /sbin/restorecon -v "$EXEC_PATH"
-      args:
-        chdir: "/root/admin/selx_cutm_policy/{{ item }}"
-      loop: "{{ missing_services | default([]) }}"
-      when: missing_services is defined and missing_services | length > 0    
-      
