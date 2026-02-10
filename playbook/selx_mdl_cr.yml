@@ -5,7 +5,7 @@
   become: true
   tasks:
     - name: checking conconfined services on server
-      ansible.builtin.shell: ps -efZ | grep "unconfined_service_t" | grep -v grep|awk '{print $NF}'
+      ansible.builtin.shell: ps -efZ | grep "unconfined_service_t" | /bin/awk -F: '{print  $NF}' END {if (NR == 0) print  """"none""""}'
       register: unconfined_check
       failed_when: false
       changed_when: false
