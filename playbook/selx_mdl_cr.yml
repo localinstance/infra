@@ -64,7 +64,7 @@
         else
          semanage fcontext -a -t {{ item.stdout }} "{{ item.item.path }}"
         fi
-#      loop: "{{ extracted_types.results }}"
-#      when: item.stdout != ""
-#      register: semanage_result
-#      changed_when: semanage_result.rc == 0
+      loop: "{{ extracted_types.results }}"
+      when: item.stdout != ""
+      register: semanage_result
+      changed_when: semanage_result.rc == 0
