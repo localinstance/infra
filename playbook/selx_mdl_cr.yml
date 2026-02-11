@@ -57,13 +57,13 @@
         msg: "{{ item.stdout }}"
       loop: "{{ extracted_types.results }}"
       when: item.stdout != ""
-#    - name: Add SELinux file contexts if not present
-#      ansible.builtin.shell: |
-#        if semanage fcontext -l | grep -q "^{{ item.item.path }} "; then
-#          semanage fcontext -m -t {{ item.stdout }} "{{ item.item.path }}"
-#        else
-#         semanage fcontext -a -t {{ item.stdout }} "{{ item.item.path }}"
-#        fi
+    - name: Add SELinux file contexts if not present
+      ansible.builtin.shell: |
+        if semanage fcontext -l | grep -q "^{{ item.item.path }} "; then
+          semanage fcontext -m -t {{ item.stdout }} "{{ item.item.path }}"
+        else
+         semanage fcontext -a -t {{ item.stdout }} "{{ item.item.path }}"
+        fi
 #      loop: "{{ extracted_types.results }}"
 #      when: item.stdout != ""
 #      register: semanage_result
