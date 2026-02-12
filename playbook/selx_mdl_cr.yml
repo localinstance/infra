@@ -88,9 +88,17 @@
       when: item.stdout != ""
       register: semanage_result
       changed_when: semanage_result.rc == 0
-    - name: Restore SELinux context on files
-      ansible.builtin.shell: "restorecon -v {{ item.item.path }}"
-      loop: "{{ extracted_types.results }}"
-      when: item.stdout != "" and semanage_result.changed
+    - name: Get paths of unconfined services
+      ansible.builtin.shell: |
+        ps -efZ | grep "unconfined_service_t" | grep -v grep | awk '{print $NF}'
+      register: unconfined_paths
+      changed_when: false
+    - name: Restore SELinux context on files and unconfined service paths
+      ansible.builtin.shell: "restorecon -v {{ item }}"
+      loop: >-
+        {{ 
+          (extracted_types.results | map(attribute='item.path') | list) + 
+          (unconfined_paths.stdout_lines | list) 
+        }}
 #########################################
 #EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk '{print $1}' | sed 's/path=//;s/;//')
