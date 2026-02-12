@@ -76,23 +76,19 @@
         - item != ""
       register: semodule_result
       changed_when: semodule_result.rc == 0
-      
-    - name: Add SELinux file contexts if not present
-      ansible.builtin.shell: |
-        if semanage fcontext -l | grep -qP "^{{ item.item.path }}\s+"; then
-          semanage fcontext -m -t {{ item.stdout }} "{{ item.item.path }}"
-        else
-         semanage fcontext -a -t {{ item.stdout }} "{{ item.item.path }}"
-        fi
-      loop: "{{ extracted_types.results }}"
-      when: item.stdout != ""
-      register: semanage_result
-      changed_when: semanage_result.rc == 0
     - name: Get paths of unconfined services
       ansible.builtin.shell: |
         ps -efZ | grep "unconfined_service_t" | grep -v grep | awk '{print $NF}'
       register: unconfined_paths
       changed_when: false
+      
+    - name: Add SELinux file contexts if not present
+      ansible.builtin.shell: |
+        if semanage fcontext -l | grep -q "^{{ item }} "; then
+          semanage fcontext -m -t {{ extracted_types.results[0].stdout }} "{{ item }}"
+        else
+          semanage fcontext -a -t {{ extracted_types.results[0].stdout }} "{{ item }}
+        fi
     - name: Restore SELinux context on files and unconfined service paths
       ansible.builtin.shell: "restorecon -v {{ item }}"
       loop: >-
