@@ -88,5 +88,9 @@
       when: item.stdout != ""
       register: semanage_result
       changed_when: semanage_result.rc == 0
+    - name: Restore SELinux context on files
+      ansible.builtin.shell: "restorecon -v {{ item.item.path }}"
+      loop: "{{ extracted_types.results }}"
+      when: item.stdout != "" and semanage_result.changed
 #########################################
 #EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk '{print $1}' | sed 's/path=//;s/;//')
