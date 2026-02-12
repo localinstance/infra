@@ -22,7 +22,7 @@
         msg: "Unconfined: {{ unconfined_check.stdout.split() }}"
       when: unconfined_check.stdout
     - name: Get names of unconfined service units
-      ansible.builtin.shell: ps -eZ | grep 'unconfined_service_t' | awk '{print $2}' | xargs -r ps -o unit= -p
+      ansible.builtin.shell: ps -efZ | grep "unconfined_service_t" | grep -v grep | awk '{print $NF}' | xargs basename
       register: unconfined_units
       changed_when: false
       failed_when: false
