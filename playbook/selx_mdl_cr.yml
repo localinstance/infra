@@ -65,7 +65,9 @@
       loop: "{{ extracted_types.results }}"
       when: item.stdout != ""
     - name: Install SELinux policy modules
-      ansible.builtin.shell: "semodule -i /root/admin/selx_cutm_policy/{{ item }}.pp"
+      ansible.builtin.shell: |
+        cd "/root/admin/selx_cutm_policy/{{ item }}"
+        semodule -i "{{ item }}.pp"
       loop: "{{ unconfined_units.stdout_lines }}"
       when:
         - unconfined_units.stdout != "none"
