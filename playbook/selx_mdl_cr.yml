@@ -64,6 +64,15 @@
         msg: "{{ item.stdout }}"
       loop: "{{ extracted_types.results }}"
       when: item.stdout != ""
+    - name: Install SELinux policy modules
+      ansible.builtin.shell: "semodule -i {{ item }}"
+        loop: "{{ unconfined_units.stdout_lines }}"
+      when:
+        - unconfined_units.stdout != "none"
+        - item != ""
+      register: semodule_result
+      changed_when: semodule_result.rc == 0
+      
     - name: Add SELinux file contexts if not present
       ansible.builtin.shell: |
         if semanage fcontext -l | grep -q "^{{ item.item.path }} "; then
