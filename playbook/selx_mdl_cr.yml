@@ -79,7 +79,7 @@
       
     - name: Add SELinux file contexts if not present
       ansible.builtin.shell: |
-        if semanage fcontext -l | grep -q "^{{ item.item.path }} "; then
+        if semanage fcontext -l | grep -qP "^{{ item.item.path }}\s+"; then
           semanage fcontext -m -t {{ item.stdout }} "{{ item.item.path }}"
         else
          semanage fcontext -a -t {{ item.stdout }} "{{ item.item.path }}"
