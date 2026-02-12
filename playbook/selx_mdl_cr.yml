@@ -89,6 +89,10 @@
         else
           semanage fcontext -a -t {{ extracted_types.results[0].stdout }} "{{ item }}
         fi
+      loop: "{{ unconfined_paths.stdout_lines }}"
+      when: unconfined_paths.stdout_lines | length > 0
+      register: semanage_dynamic
+      
     - name: Restore SELinux context on files and unconfined service paths
       ansible.builtin.shell: "restorecon -v {{ item }}"
       loop: >-
