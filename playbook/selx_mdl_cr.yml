@@ -36,8 +36,7 @@
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
     - name: Generate SELinux policy templates for each service
-      ansible.builtin.shell: |
-#        EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk '{print $1}' | sed 's/path=//;s/;//')
+      ansible.builtin.shell: |       
         EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk -F'[= ]' '{print $3}')
         CLEAN_NAME=$(echo "{{ item }}" | sed 's/\.service//;s/[^a-zA-Z0-9]/_/g')
         sepolicy generate --init -n $CLEAN_NAME $EXEC_PATH
@@ -88,3 +87,5 @@
       when: item.stdout != ""
       register: semanage_result
       changed_when: semanage_result.rc == 0
+#########################################
+#EXEC_PATH=$(systemctl show -p ExecStart --value "{{ item }}" | awk '{print $1}' | sed 's/path=//;s/;//')
