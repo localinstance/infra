@@ -39,7 +39,7 @@
       ansible.builtin.shell: |       
         cd "/root/admin/selx_cutm_policy/{{ item }}"
         if [ ! -f "{{ item }}.te" ]; then
-          sepolicy generate --init -n {{ item }}
+          sepolicy generate --init -n {{ item }} .
         fi
       loop: "{{ unconfined_units.stdout_lines }}"
       when: unconfined_units.stdout | trim | length > 0
